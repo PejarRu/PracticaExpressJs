@@ -1,0 +1,36 @@
+{% extends "publico_base.njk" %}
+
+{% block title %}Ficha del juego{{ juego.nombre }}
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <h1 class="text-center mt-3 mb-3">{{ juego.nombre }}</h1>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <img src="/public/uploads/{{ juego.imagen }}" alt="{{ juego.nombre }}" class="img-fluid">
+            </div>
+            <div class="col-md-6">
+                <p class="font-weight-bold">Descripción:</p>
+                <p>{{ juego.descripcion }}</p>
+                <p class="font-weight-bold">Edad mínima:</p>
+                <p>{{ juego.edad }}</p>
+                <p class="font-weight-bold">Número de jugadores:</p>
+                <p>{{ juego.jugadores }}</p>
+                <p class="font-weight-bold">Tipo:</p>
+                <p>{{ juego.tipo }}</p>
+                <p class="font-weight-bold">Precio:</p>
+                <p>{{ juego.precio }}</p>
+            </div>
+        </div>
+        <h2 class="text-center mt-3 mb-3">Ediciones</h2>
+        {% for edicion in juego.ediciones %}
+            <ul class="list-group">
+                <li class="list-group-item">
+                    {{ edicion.edicion }} | 
+                    {{ edicion.anyo }}
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+{% endblock %}

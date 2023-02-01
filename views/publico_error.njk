@@ -1,0 +1,9 @@
+{% extends "publico_base.njk" %}
+
+{% block title %}Error{% endblock %}
+
+{% block contenido %}
+    <h1>Error</h1>
+    <p>{{ mensaje|default("Error en la aplicación") }}
+    </p>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'admin_base.njk' %}
+
+{% block contenido %}
+    {% if juego %}
+        {% set accion = 'Editar' %}
+    {% endif %}
+    <h1>{{accion | default('Crear')}} juego</h1>
+    <form action="/admin/juegos/{{ juego.id | default('nuevo')}}" method="POST" enctype="multipart/form-data">
+        {% if juego %}
+            <input type="hidden" name="_method" value="PUT">
+        {% endif %}
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre del juego" value="{{ juego.nombre }}" required>
+        </div>
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Ingresa una descripción del juego" required>{{ juego.descripcion }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="edad">Edad Mínima</label>
+            <input type="number" min="0" max="100" class="form-control" id="edad" name="edad" placeholder="Ingresa la edad mínima para jugar" value="{{ juego.edad }}" required>
+        </div>
+        <div class="form-group">
+            <label for="jugadores">Número de Jugadores</label>
+            <input type="number" class="form-control" id="jugadores" name="jugadores" placeholder="Ingresa el número de jugadores recomendado" value="{{ juego.jugadores }}" required>
+        </div>
+        <select name="tipo">
+            <option value="" disabled selected>Selecciona el tipo de juego</option>
+            {% for tip in[
+                "rol",
+                "escape",
+                "dados",
+                "fichas",
+                "cartas",
+                "tablero"
+            ] %}
+                <option value="{{ tip }}" {% if juego.tipo == tip %}selected{% endif %}>{{ tip }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="form-group">
+            <label for="precio">Precio</label>
+            <input type="number" min="0" class="form-control" id="precio" name="precio" placeholder="Ingresa el precio del juego" value="{{ juego.precio }}" required>
+        </div>
+        <div class="form-group">
+            <label for="imagen">Imagen</label>
+            <input type="file" class="form-control-file" id="imagen" name="imagen">
+        </div>
+        <div class="form-group">
+            <label for="edicion">Edición</label>
+            <input type="text" class="form-control" id="edicion" name="edicion" placeholder="Ingresa las ediciones del juego" value="{{ juego.ediciones.edicion }}">
+        </div>
+        <div class="form-group">
+            <label for="anyo">Año de Edición</label>
+            <input type="number" class="form-control" id="anyo" min="2000" name="anyo" placeholder="Ingresa las año de la edicion del juego" value="{{ juego.ediciones.anyo }}">
+        </div>
+
+        <!-- 
+            <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Añadir Edición</button>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="edicion">Edición</label>
+                            <input type="text" class="form-control" id="edicion" name="edicion" placeholder="Ingresa las ediciones del juego" value="{{ juego.ediciones.edicion }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="anyo">Año de Edición</label>
+                            <input type="number" class="form-control" id="anyo" min="2000" name="anyo" placeholder="Ingresa las año de la edicion del juego" value="{{ juego.ediciones.anyo }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+        <button type="submit" class="btn btn-primary m-4">{{accion | default('Crear')}}</button>
+    </form>
+    {% if juego %}
+        <form action="/admin/juegos/borrar/{{juego.id}}" method="POST" class="m-2">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="btn btn-danger">Borrar</button>
+        </form>
+    {% endif %}
+{% endblock %}
