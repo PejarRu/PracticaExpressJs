@@ -1,15 +1,17 @@
 {% extends "publico_base.njk" %}
 
-{% block title %}Ficha del juego{{ juego.nombre }}
+{% block title %}Ficha del juego {{ juego.nombre }}
 {% endblock %}
 
 {% block contenido %}
     <div class="container">
         <h1 class="text-center mt-3 mb-3">{{ juego.nombre }}</h1>
         <div class="row">
-            <div class="col-md-6 mb-3">
-                <img src="/public/uploads/{{ juego.imagen }}" alt="{{ juego.nombre }}" class="img-fluid">
-            </div>
+            {% if juego.imagen %}
+                <div class="col-md-6 mb-3">
+                    <img src="/uploads/{{ juego.imagen }}" alt="{{ juego.nombre }}" class="img-fluid">
+                </div>
+            {% endif%}
             <div class="col-md-6">
                 <p class="font-weight-bold">Descripción:</p>
                 <p>{{ juego.descripcion }}</p>
@@ -33,4 +35,10 @@
             </ul>
         {% endfor %}
     </div>
+     {% if admin %}
+        <form action="/admin/juegos/{{juego.id}}?_method=DELETE" method="POST" class="m-2">
+            <button type="submit" class="btn btn-danger">Borrar</button>
+        </form>
+        <a href="/admin/juegos/editar/{{juego.id}}" class="btn btn-warning m-2">Editar</a>
+    {% endif %}
 {% endblock %}

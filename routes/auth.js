@@ -88,46 +88,36 @@ router.get("/register", (req, res) => {
 // POST /auth/register
 router.post("/register", (req, res) => {
   console.log("########### REGISTER ###########");
-  // Recoger login y password de la petición
-  const login = req.body.login;
-  const password = req.body.password;
 
-  // Encriptar la contraseña con bcrypt
-  bcrypt.hash(password, 10, (err, passwordhHash) => {
+  // Crear nuevo usuario con los datos recogidos de la petición
+
+  const nuevoUsuario = new Usuario({
+    login: req.body.login,
+    password: req.body.password,
+  });
+
+  // Guardar usuario en la base de datos
+  nuevoUsuario.save((err) => {
     if (err) {
       console.log(err);
       return res.render("auth_login", {
-        error: "Error de aplicacion al registrar",
+        error: "Error de aplicacion al registrar. La contraseña debe ser 8 caharacteres de largo",
+        sendTo: "/auth/register",
+        action: "Registrarme",
       });
     }
-    // Crear nuevo usuario con los datos recogidos de la petición
-    const nuevoUsuario = new Usuario({
-      login: login,
-      password: passwordhHash,
+    Usuario.find((err, result) => {
+      if (err) console.error(err);
+      console.log(result);
     });
+    // Almacenar login del usuario en sesión
+    req.session.usuario = nuevoUsuario;
 
-    // Guardar usuario en la base de datos
-    nuevoUsuario.save((err) => {
-      if (err) {
-        console.log(err);
-        return res.render("auth_login", {
-          error: "Error de aplicacion al registrar",
-          sendTo: "/auth/register",
-          action: "Registrarme",
-        });
-      }
-      Usuario.find((err, result) => {
-        if (err) console.error(err);
-        console.log(result);
-      });
-      // Almacenar login del usuario en sesión
-      req.session.usuario = nuevoUsuario;
-
-      // Redirigir a la ruta base del enrutador de juegos
-      res.redirect("/admin/juegos");
-    });
+    // Redirigir a la ruta base del enrutador de juegos
+    res.redirect("/admin/juegos");
   });
 });
+
 // GET /auth/logout
 router.get("/logout", authMiddleware, (req, res) => {
   req.session.destroy();

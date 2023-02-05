@@ -58,11 +58,18 @@ router.get("/juego/:id", (req, res) => {
   console.log("Buscando juego " + req.params.id);
   Juego.findById(req.params.id)
     .then((juego) => {
-      console.log("Cargando vista " + juego.nombre);
+      console.log("Cargando vista juego: " + juego.nombre);
       if (!juego) {
         res.render("publico_error", { message: "Juego no encontrado" });
       } else {
-        res.render("publico_juego", { juego });
+        let admin = req.session.usuario
+        if (admin) {
+          console.log("Administrador '" + req.session.usuario.login + "'?: " + admin);
+          res.render("publico_juego", { juego, admin });
+        } else {
+          console.log('Administrador: ' + admin);
+          res.render("publico_juego", { juego });
+        }
       }
     })
     .catch((err) => {

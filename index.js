@@ -18,13 +18,23 @@ const authRouter = require("./routes/auth");
 //Middleware necesario
 const authMiddleware = require("./utils/middleware");
 juegosRouter.use(authMiddleware);
+//Utitlidades
+const generadorUsuarios = require("./utils/generar_usuarios");
+const generadorJuegos = require("./utils/generar_juegos");
 
 // Conexion con el servidor mongoose
-mongoose.set("strictQuery", false);
-mongoose.connect("mongodb://localhost:27017/playrest_v3", {
-  useNewUrlParser: true,
-});
-//mongoose.connect('mongodb://localhost/juegos', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://0.0.0.0:27017/juegos',
+  { useNewUrlParser: true }).then(() => {
+    //Generamos usuario y juegos para comprobar la funcionalidad de la aplicacion
+
+    generadorUsuarios.reiniciarUsuarios();
+    generadorJuegos.reiniciarJuegos();
+  })
+  .catch(error => console.error(error));;
+
+
+
+
 // Servidor Express
 const app = express();
 //Se configura la autenticación basada en sesiones
@@ -44,22 +54,20 @@ app.set("view engine", "njk");
 
 // Carga de middleware y demas
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(methodOverride("_method"));
-servidor.use(express.static('./public/uploads'));
-app.use(
-  session({ secret: "mysecretkey", resave: true, saveUninitialized: true })
-);
-
+app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
+app.use('/uploads', express.static(__dirname + '/public/uploads'));
+app.use('/jsUtils', express.static(__dirname + '/utils'));
+app.use(express.static(__dirname + '/public'));
 //Se asocian los enrutadores
-app.use("/admin", juegosRouter);
 app.use("/", publicoRouter);
+app.use("/admin/juegos", juegosRouter);
 app.use("/auth", authRouter);
+
+
 
 // Puesta en marcha del servidor
 app.listen(8080);
 console.log("Listening on port 8080");
 
-require("./utils/generar_usuarios");
-require("./utils/generar_juegos");
 

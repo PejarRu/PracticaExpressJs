@@ -3,21 +3,40 @@
  * utilidad que genera 2 usuario basicos para 
  * comprobar la funcionalidad de la app
  */
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 const Usuario = require(__dirname + "/../models/usuario");
-Usuario.collection.drop();
+const bcrypt = require("bcrypt");
 
-new Usuario({
-  login: "maycalle",
-  password: "maycalle",
-}).save();
+exports.reiniciarUsuarios = async function () {
+  try {
+    await Usuario.collection.drop();
+    console.log('Colección de usuarios borrada');
+  } catch (error) {
+    console.error('########========########');
+    console.error('Error al borrar la colección de usuarios');
+    console.error(error);
+    console.error('########========########');
+  }
+  const usuarios = [{ login: "maycalle", password: "maycalle" }, { login: "rosamaria", password: "rosamaria" }];
+  
+  for (let index = 0; index < usuarios.length; index++) {
+    try {
+      await new Usuario(usuarios[index]).save();
+      console.log(`Usuario ${index} guardado`);
+    } catch (error) {
+      console.error('########========########');
+      console.error('Error al guardar usuario');
+      console.error(error);
+      console.error('########========########');
+    }
+  }
 
-new Usuario({
-  login: "rosamaria",
-  password: "rosamaria",
-}).save();
-
-Usuario.find().then((result) => {
-  console.log(result);
-});
+  try {
+    const result = await Usuario.find();
+    console.log(result);
+  } catch (error) {
+    console.error('########========########');
+    console.error('Error al buscar usuarios');
+    console.error(error);
+    console.error('########========########');
+  }
+};

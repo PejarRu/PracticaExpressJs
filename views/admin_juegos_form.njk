@@ -1,17 +1,15 @@
 {% extends 'admin_base.njk' %}
-
 {% block contenido %}
     {% if juego %}
         {% set accion = 'Editar' %}
+        {% set url = "/admin/juegos/"+juego.id+"?_method=PUT" %}
     {% endif %}
     <h1>{{accion | default('Crear')}} juego</h1>
-    <form action="/admin/juegos/{{ juego.id | default('nuevo')}}" method="POST" enctype="multipart/form-data">
-        {% if juego %}
-            <input type="hidden" name="_method" value="PUT">
-        {% endif %}
+    <form action="{{ url | default('/admin/juegos/nuevo')}}" method="POST" id="gameForm" enctype="multipart/form-data" >
+        
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre del juego" value="{{ juego.nombre }}" required>
+            <input type="text" minlength="6" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre del juego" value="{{ juego.nombre }}" required>
         </div>
         <div class="form-group">
             <label for="descripcion">Descripción</label>
@@ -25,7 +23,7 @@
             <label for="jugadores">Número de Jugadores</label>
             <input type="number" class="form-control" id="jugadores" name="jugadores" placeholder="Ingresa el número de jugadores recomendado" value="{{ juego.jugadores }}" required>
         </div>
-        <select name="tipo">
+        <select name="tipo" required>
             <option value="" disabled selected>Selecciona el tipo de juego</option>
             {% for tip in[
                 "rol",
@@ -48,44 +46,33 @@
             <input type="file" class="form-control-file" id="imagen" name="imagen">
         </div>
         <div class="form-group">
-            <label for="edicion">Edición</label>
-            <input type="text" class="form-control" id="edicion" name="edicion" placeholder="Ingresa las ediciones del juego" value="{{ juego.ediciones.edicion }}">
-        </div>
-        <div class="form-group">
-            <label for="anyo">Año de Edición</label>
-            <input type="number" class="form-control" id="anyo" min="2000" name="anyo" placeholder="Ingresa las año de la edicion del juego" value="{{ juego.ediciones.anyo }}">
-        </div>
-
-        <!-- 
-            <div id="accordion">
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Añadir Edición</button>
-                    </h5>
-                </div>
-
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="edicion">Edición</label>
-                            <input type="text" class="form-control" id="edicion" name="edicion" placeholder="Ingresa las ediciones del juego" value="{{ juego.ediciones.edicion }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="anyo">Año de Edición</label>
-                            <input type="number" class="form-control" id="anyo" min="2000" name="anyo" placeholder="Ingresa las año de la edicion del juego" value="{{ juego.ediciones.anyo }}">
-                        </div>
+            <label for="ediciones">Ediciones</label>
+            <div id="edicionesContainer">
+                        <button type="button" class="btn-outline-primary btn-sm" id="addEdition">Añadir</button>
+                        <button type="button" class="btn-outline-danger btn-sm" id="removeEdition">Eliminar</button>
+                {% if juego %}
+                    {% for edicion in juego.ediciones %}
+                    <div class="input-group " id="edicion">
+                        <input type="text" class="form-control col-6 m-1" name="edicion[]" placeholder="Edición" value="{{edicion.edicion}}" >
+                        <input type="number" min="2000" max="2023" class="form-control col-6 m-1" name="anyoEdicion[]" placeholder="Año" value="{{edicion.anyo | default('2000')}}" >
                     </div>
-                </div>
+                    {% endfor %}
+                {% endif %}
+                    <div class="input-group " id="edicion">
+                        <input type="text" class="form-control col-6 m-1" name="edicion[]" placeholder="Edición" >
+                        <input type="number" min="2000" max="2023" class="form-control col-6 m-1" name="anyoEdicion[]" placeholder="Año" value="{{edicion.anyo | default('2000')}}">
+                    </div>
             </div>
         </div>
-        -->
+
         <button type="submit" class="btn btn-primary m-4">{{accion | default('Crear')}}</button>
     </form>
-    {% if juego %}
-        <form action="/admin/juegos/borrar/{{juego.id}}" method="POST" class="m-2">
-            <input type="hidden" name="_method" value="DELETE">
+     {% if juego %}
+        <form action="/admin/juegos/{{juego.id}}?_method=DELETE" method="POST" class="m-2">
             <button type="submit" class="btn btn-danger">Borrar</button>
         </form>
     {% endif %}
+{% endblock %}
+{% block meta_links %}
+    <script src="/jsUtils/addEditions.js"></script>
 {% endblock %}

@@ -12,11 +12,10 @@
         <tbody>
             {% for juego in juegos %}
                 <tr>
-                    <td>{{juego.nombre}}</td>
+                    <td><em><a href="/juego/{{ juego._id }}">{{ juego.nombre }}</a></em></td>
                     <td class="row">
                         <a href="/admin/juegos/editar/{{juego.id}}" class="btn btn-warning m-2">Editar</a>
-                        <form action="/admin/juegos/borrar/{{juego.id}}" method="POST" class="m-2">
-                            <input type="hidden" name="_method" value="DELETE">
+                         <form action="/admin/juegos/{{juego.id}}?_method=DELETE" method="POST" class="m-2">
                             <button type="submit" class="btn btn-danger">Borrar</button>
                         </form>
                     </td>
