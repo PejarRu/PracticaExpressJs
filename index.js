@@ -23,7 +23,7 @@ const generadorUsuarios = require("./utils/generar_usuarios");
 const generadorJuegos = require("./utils/generar_juegos");
 
 // Conexion con el servidor mongoose
-mongoose.connect('mongodb://mongodb:27017/juegos',
+mongoose.connect('mongodb://127.0.0.1:27017/juegos',
   { useNewUrlParser: true }).then(() => {
     //Generamos usuario y juegos para comprobar la funcionalidad de la aplicacion
 
