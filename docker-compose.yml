@@ -3,7 +3,7 @@ services:
   app:
     depends_on:
     - mongodb
-    image: anton/express-practica
+    image: anton/expres
     ports:
     - 8080:8080
     build: ./
